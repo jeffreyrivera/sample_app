@@ -11,7 +11,8 @@ class UsersController < ApplicationController
   def create
   	@user = User.new(params[:user]) # passing the hash params for the given user which contains
   									# the attributes needed to create a new user.
-  	if @user.save	
+  	if @user.save
+  		sign_in @user
   		flash[:success] = "Welcome to the Sample App!"				
 		redirect_to @user
   	else 
