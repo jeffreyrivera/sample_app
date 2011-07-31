@@ -3,10 +3,10 @@ require 'spec_helper'
 describe UsersController do
 	render_views
 	
-	describe "GET 'index'" do
+	  describe "GET 'index'" do
 	  
 	  describe "for non-signed-in users" do
-	    it "should deny access"
+	    it "should deny access" do
 	      get :index
 	      response.should redirect_to(signin_path)
 	      flash[:notice].should =~ /sign in/i
@@ -21,6 +21,11 @@ describe UsersController do
 	      third= Factory(:user, :email => "another@example.net")
 	      
 	      @users=[@user,second,third]
+	      
+	      30.times do
+	        @users << Factory(:user, :email => Factory.next(:email))
+	      end
+	      
 	    end
 	    
 	    it "should be succesful" do
@@ -35,14 +40,25 @@ describe UsersController do
   		
   		it "should have an element for each user" do
   		  get :index
-  		  @users.each do |user|
+  		  @users[0..2].each do |user|
   		    response.should have_selector("li", :content => user.name)
 	      end
 	    end
-		
+	    
+	    it "should paginate users" do
+        get :index
+        response.should have_selector("div.pagination")
+        response.should have_selector("span.disabled", :content => "Previous")
+        response.should have_selector("a", :href => "/users?page=2", :content => "2")
+        response.should have_selector("a", :href => "/users?page=2",:content => "Next")
+      end
+	      
+      
+		end
+	
 	end
 
-	describe "GET 'show'" do
+	  describe "GET 'show'" do
 	
 		before(:each) do
 			@user= Factory(:user)
@@ -145,8 +161,8 @@ describe UsersController do
 		  	post :create, :user => @attr
 		  	flash[:success].should =~ /welcome to the sample app/i
 		  end
-		  
-		end
+		  end
+		
   	end
   	
   	describe "GET 'edit'" do
@@ -154,7 +170,7 @@ describe UsersController do
   		before(:each) do
 			@user= Factory(:user)
 			test_sign_in(@user)
-		end
+		  end
 		
 		it "should be succesful" do
 			get :edit, :id => @user # same as :id => @user.id
@@ -172,9 +188,9 @@ describe UsersController do
 			response.should have_selector("a", :href => gravatar_url, 
 											   :content => "change")
 		end
-			
-  	end
-  	
+
+  
+    end
   	
   	describe "PUT 'update'" do
 
@@ -227,9 +243,9 @@ describe UsersController do
     
     end
       
-  end
+    end
   
-  describe "authentication of edit/update pages" do
+    describe "authentication of edit/update pages" do
   
   	before(:each) do
   		@user= Factory(:user)
@@ -265,33 +281,51 @@ describe UsersController do
 	  		put :update, :id => @user, :user => {}
 	  		response.should redirect_to(root_path)
 	  	end  		
-  		
   	end
   
-  
   end
-  
-  
-end			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-  	
 
+    describe "DELETE 'destroy'" do
+      
+      before(:each) do
+        @user = Factory(:user)
+      end
+      
+      describe "as non-signed-in user" do
+          it "should deny acces" do
+            delete :destroy, :id => @user
+            response.should redirect_to(signin_path)
+          end
+      end
+      
+      describe "as non-admin user" do
+        it "should protect the page" do
+          test_sign_in (@user)
+          delete :destroy, :id => @user
+          response.should redirect_to(root_path)
+      end
+      
+      describe "as admin user" do
+        
+        before(:each) do
+          admin = Factory(:user, :email => "admin@example.com", :admin => true)
+          test_sign_in(admin)
+        end
+        
+        it "should destroy the user" do
+          lambda do
+            delete :destroy, :id => @user
+          end.should change(User, :count).by(-1)
+        end
+        
+        it "should redirect to users page" do
+          delete :destroy, :id => @user
+          response.should redirect_to(users_path)
+        end
+        
+      end
+      
+    end
+    
+end
+end
