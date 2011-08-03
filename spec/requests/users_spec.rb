@@ -33,7 +33,7 @@ describe "Users" do
     end
   end#signup end
   
-  describe "sign in/sign out"
+  describe "sign in/sign out" do
    	describe "failure" do
    		it "should not sign a user in" do
   			visit signin_path
@@ -53,4 +53,31 @@ describe "Users" do
   		end
   	end  
   end
+  
+  it "should not have links to destroy user" do
+    user = Factory(:user)
+		integration_sign_in(user)#helper function
+		controller.should be_signed_in
+    click_link "Users"
+    response.should have_selector("ul.users")
+    response.should_not have_selector("a", :href => "/users/1", :content => "delete")
+  end
 
+  #it "should not be able to destroy users"
+  
+  describe "admin" do
+    
+    before(:each) do
+      admin = Factory(:user, :email => "admin@example.com", :admin => true)
+      integration_sign_in(admin)
+    end
+    
+    it "should be able to have links to destroy user" do
+      click_link "Users"
+      response.should have_selector("ul.users")
+      response.should have_selector("a", :href => "/users/1", :content => "delete")
+    end
+    
+  end
+  
+end

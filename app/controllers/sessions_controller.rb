@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+before_filter :block_users, :only => [:new, :create]
 
   def new
   	@title = "Sign in"
@@ -28,5 +29,9 @@ class SessionsController < ApplicationController
   	redirect_to root_path	
   	
   end
-
-end
+  
+  private
+    def block_users
+      redirect_to(root_path) if signed_in?
+    end
+  end
