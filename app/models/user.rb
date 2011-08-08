@@ -18,6 +18,8 @@ class User < ActiveRecord::Base
 	#we add password and password confirmation because we need tehn for sign up process
 	attr_accessible :name, :email, :password, :password_confirmation
 	
+	has_many :microposts, :dependent => :destroy
+	
 	
 	email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 	
@@ -56,6 +58,10 @@ class User < ActiveRecord::Base
 		(user && user.salt == cookie_salt) ? user : nil
 	end
 	
+	def feed
+	 Micropost.where("user_id = ?", id) #this will change
+	 #the ? ensures that the id is escaped to prevent sql injections
+	end
 	private
 	
 		def encrypt_password

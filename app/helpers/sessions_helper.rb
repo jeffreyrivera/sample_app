@@ -26,6 +26,10 @@ module SessionsHelper
 		user == current_user
 	end
 	
+	def authenticate
+  	deny_access unless signed_in?
+  end
+	
 	def deny_access
 		store_location
 		#check out flash styles for more info on :notice
