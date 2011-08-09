@@ -63,12 +63,29 @@ describe MicropostsController do
          post :create, :micropost => @attr
          flash[:success].should =~ /micropost created/i
       end
-      
-      
-      
-      
+  
     end
     
+    describe "micropost layout" do
+    
+       before(:each) do
+          @mp1 = Factory(:micropost, :user => @user, :content => "Foo bar")
+    		  @mp2 = Factory(:micropost, :user => @user, :content => "Baz quux")    
+        end
+        
+        it"should have a sidebar" do
+          post :create
+          response.should have_selector("table.front")
+          response.should have_selector("td.sidebar")
+        end
+        
+        it"should pluralize count" do
+          post :create
+          response.should have_selector('span', :content => "2 microposts") 
+        end
+      
+    end
+
   end
 
   describe "DELETE 'destroy'" do
@@ -85,6 +102,10 @@ describe MicropostsController do
       it "should deny access" do
         delete :destroy, :id => @micropost
         response.should redirect_to(root_path)
+      end
+      
+      it "should not show delete link to wrong_user" do
+        
       end
       
     end

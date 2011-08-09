@@ -2,6 +2,15 @@ class MicropostsController < ApplicationController
   before_filter :authenticate, :only => [ :create, :destroy ]
   before_filter :authorized_user, :only => :destroy
   
+  def index
+    @title = "All microposts"
+    # @users = User.all -- will work using Array class, but to make it
+    #                      work with will_paginate we use paginate method
+    #@microposts = Micropost.paginate(:page => params[:page])
+    @user = User.find(params[:id])
+  	@microposts = @user.microposts.paginate(:page => params[:page])
+  end
+  
   def create
     @micropost = current_user.microposts.build(params[:micropost])
     if @micropost.save

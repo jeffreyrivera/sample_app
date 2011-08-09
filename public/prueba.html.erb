@@ -1,0 +1,123 @@
+
+micropost with nice html
+
+<div class="micropost_items" 
+	style="
+	position: relative;
+	border-bottom: 1px solid #EBEBEB;
+	
+	display: block;
+	outline: none;
+	margin-top: -1px;
+	border-top: 1px solid transparent;">
+	
+	<div class="micropost_content" 
+		style="padding: 10px 20px;
+		font-size: 15px;
+		min-height: 80px;
+		position: relative;">
+		
+		<div class="micropost_item" 
+			style="float: left;	position: relative; ">
+			<span class="content" style="float: left;"><%= micropost.content %></span>
+			<div class="timestamp" style="clear:both; color: gray;">
+				Posted <%= time_ago_in_words(micropost.created_at) %> ago
+			</div>
+		</div>
+	
+	
+		<% user = micropost.user rescue User.find(micropost.user_id) %>
+		<% if current_user?( user ) %>
+		<div class="micropost_delete_link"
+			style="float: right; clear: both; position: relative; width: 50px;">
+			<%= link_to "delete", micropost, :method => :delete, :confirm => "You sure?", :title => micropost.content %>
+		</div>
+		<% end %>
+	</div>
+	
+</div>
+
+
+
+sho.html with html
+
+<div class="profile" summary="profile information" style="width: 880px; position: relative;">
+	
+		<div class="main round" style="float: left; 
+									   min-height: 800px;
+									   padding: 10px;
+									   background-color: #FFC;
+									   width: 480px;">
+			<div  class="heading" style="border-bottom: 1px solid #EBEBEB; padding: 10px;">
+			<h1>
+				<%= gravatar_for @user%>
+				<%= @user.name %></br>
+			</h1>
+			</div>
+			<% unless @user.microposts.empty? %>
+				<div class="microposts_stream" summary="User microposts" 
+				style="position: relative; 
+					   min-height: 80px;
+					   width: 480px;
+					   position: relative;">
+					<%= render @microposts %>
+				</div>	
+				<%= will_paginate @microposts %>
+			<% end %>
+		</div>
+		<div class="sidebar round"
+			style=" float: right; text-align: left; position: relative;
+			background-color: #FFC;	
+			margin-left: 20px;		
+			padding: 10px;
+			width: 340px;">
+			<strong>Name</strong> <%= @user.name %><br />
+			<strong>URL</strong> <%= link_to user_path(@user), @user %><br />
+			<strong>Microposts</strong> <%= @user.microposts.count %>
+		</div>
+		<div style=" clear: both;"></div>
+	
+</div>
+
+
+
+micropost with tables
+<!-- <tr>
+	<td class="micropost">
+		<span class="content"><%= micropost.content %></span>
+		<span class="timestamp">
+			Posted <%= time_ago_in_words(micropost.created_at) %> ago
+		</span>
+	</td>
+	<% user = micropost.user rescue User.find(micropost.user_id) %>
+	<% if current_user?( user ) %>
+	<td>
+		<%= link_to "delete", micropost, :method => :delete, :confirm => "You sure?", :title => micropost.content %>
+	</td>
+	<% end %>
+</tr> -->
+
+
+show with tables
+
+<!-- <table class="profile" summary="profile information">
+	<tr>
+		<td class="main">
+			<h1>
+				<%= gravatar_for @user%>
+				<%= @user.name %>
+			</h1>
+			<% unless @user.microposts.empty? %>
+				<table class="microposts" summary="User microposts">
+					<%= render @microposts %>
+				</table>
+				<%= will_paginate @microposts %>
+			<% end %>
+		</td>
+		<td class="sidebar round">
+			<strong>Name</strong> <%= @user.name %><br />
+			<strong>URL</strong> <%= link_to user_path(@user), @user %><br />
+			<strong>Microposts</strong> <%= @user.microposts.count %>
+		</td>
+	</tr>
+</table> -->

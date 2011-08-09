@@ -60,9 +60,18 @@ describe UsersController do
 
 	  describe "GET 'show'" do
 	
-		before(:each) do
-			@user= Factory(:user)
-		end
+    before(:each) do
+  		@user= Factory(:user)
+  	end
+	
+	  it "should not allow others users to delete current_user" do
+      wrong_user = Factory(:user, :email => Factory.next(:email) )     
+      test_sign_in(wrong_user)
+      @micropost = Factory(:micropost, :user => @user)
+      get :show, :id => @user
+      response.should_not have_selector("a", :href => "/microposts/1", :content => "delete")
+	  end
+	
 		#get 'show' or get :show same but for REST porpuses we will use :show
 		it "should be succesful" do
 			get :show, :id => @user # same as :id => @user.id

@@ -1,5 +1,5 @@
 .container {
-  width: 710px;
+  width: 920px;
 }
 
 body {
@@ -16,6 +16,7 @@ header img {
 }
 
 section {
+  width: 880px;	
   margin-top: 1em;
   font-size: 120%;
   padding: 20px;
@@ -130,9 +131,10 @@ td.sidebar {
 /* FOOTER*/
 
 footer{
+	clear: both;
 	text-align: center;
 	margin-top: 10px;
-	width: 710px;
+	width: 920px;
 	margin-left: auto;
 	margin-right: auto;
 }
